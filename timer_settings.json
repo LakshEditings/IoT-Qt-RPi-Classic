@@ -1,18 +1,26 @@
 {
   "living_light_1": {
-    "enabled": true,
-    "on_time": "13:55",
-    "off_time": "13:56",
-    "is_one_time": false,
-    "duration_minutes": 17,
-    "power_saving": false
-  },
-  "living_plug_1": {
-    "enabled": true,
-    "on_time": "13:58",
-    "off_time": "13:59",
+    "enabled": false,
+    "on_time": "18:00",
+    "off_time": "22:00",
     "is_one_time": false,
     "duration_minutes": 0,
-    "power_saving": false
+    "power_saving": false,
+    "sleep_enabled": true,
+    "sleep_start": "16:35",
+    "sleep_end": "16:40",
+    "sleep_duration": 1
+  },
+  "living_light_2": {
+    "enabled": true,
+    "on_time": "18:00",
+    "off_time": "22:00",
+    "is_one_time": false,
+    "duration_minutes": 0,
+    "power_saving": false,
+    "sleep_enabled": true,
+    "sleep_start": "23:00",
+    "sleep_end": "05:00",
+    "sleep_duration": 1
   }
 }

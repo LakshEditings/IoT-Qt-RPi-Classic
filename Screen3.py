@@ -245,6 +245,60 @@ class TimerWidget(QFrame):
 
         main_layout.addWidget(advanced_card)
 
+        # ═══════════════════════════════════════════════
+        # 🚶 MOTION SENSOR
+        # ═══════════════════════════════════════════════
+        motion_card = QFrame()
+        motion_card.setStyleSheet(f"""
+            QFrame {{
+                background-color: rgba(60, 40, 80, 150);
+                border: 2px solid rgba(150, 100, 200, 80);
+                border-radius: 12px;
+                padding: 15px;
+            }}
+        """)
+        motion_layout = QVBoxLayout(motion_card)
+        motion_layout.setSpacing(8)
+
+        # Motion Sensor Header
+        motion_header = QLabel("🚶 Motion Sensor Control")
+        motion_header.setFont(QFont("Segoe UI", 12, QFont.Bold))
+        motion_header.setStyleSheet(f"color: {theme['primary2']}; background: transparent;")
+        motion_layout.addWidget(motion_header)
+
+        motion_desc = QLabel("When enabled, device turns ON for 5 minutes when motion is detected")
+        motion_desc.setFont(QFont("Segoe UI", 9))
+        motion_desc.setStyleSheet("color: #aaa; background: transparent;")
+        motion_desc.setWordWrap(True)
+        motion_layout.addWidget(motion_desc)
+
+        # Enable Motion Sensor Checkbox
+        self.motion_enabled = QCheckBox("✓ Enable Motion Sensor")
+        self.motion_enabled.setFont(QFont("Segoe UI", 11, QFont.Bold))
+        self.motion_enabled.setStyleSheet(f"""
+            QCheckBox {{
+                background: transparent;
+                color: {theme['primary2']};
+                padding: 5px;
+            }}
+        """)
+        self.motion_enabled.setChecked(False)
+        motion_layout.addWidget(self.motion_enabled)
+
+        # Motion Status Label (shows when motion detected)
+        self.motion_status_label = QLabel("")
+        self.motion_status_label.setFont(QFont("Segoe UI", 9))
+        self.motion_status_label.setStyleSheet("""
+            background-color: rgba(255, 140, 0, 30);
+            border-radius: 6px;
+            padding: 8px;
+            color: orange;
+        """)
+        self.motion_status_label.hide()  # Hidden by default
+        motion_layout.addWidget(self.motion_status_label)
+
+        main_layout.addWidget(motion_card)
+
         # Next Action Display
         self.next_action_label = QLabel()
         self.next_action_label.setFont(QFont("Segoe UI", 10))
@@ -483,7 +537,12 @@ class TimerWidget(QFrame):
             "off_time": self.off_time.time().toString("hh:mm"),
             "is_one_time": self.is_one_time,
             "duration_minutes": self.duration_spinbox.value(),
-            "power_saving": self.power_saving.isChecked()
+            "power_saving": self.power_saving.isChecked(),
+            # Sleep timer settings
+            "sleep_enabled": self.sleep_enabled.isChecked(),
+            "sleep_start": self.sleep_start.time().toString("hh:mm"),
+            "sleep_end": self.sleep_end.time().toString("hh:mm"),
+            "sleep_duration": self.sleep_duration.value()
         }
 
     def load_settings(self, settings):
@@ -506,6 +565,19 @@ class TimerWidget(QFrame):
         
         if "power_saving" in settings:
             self.power_saving.setChecked(settings["power_saving"])
+        
+        # Load sleep timer settings
+        if "sleep_enabled" in settings:
+            self.sleep_enabled.setChecked(settings["sleep_enabled"])
+        
+        if "sleep_start" in settings:
+            self.sleep_start.setTime(QTime.fromString(settings["sleep_start"], "hh:mm"))
+        
+        if "sleep_end" in settings:
+            self.sleep_end.setTime(QTime.fromString(settings["sleep_end"], "hh:mm"))
+        
+        if "sleep_duration" in settings:
+            self.sleep_duration.setValue(settings["sleep_duration"])
         
         if self.timer_enabled:
             self.start_timer()
@@ -759,3 +831,27 @@ class Screen3(QWidget):
                 print("✓ Timer settings loaded")
             except Exception as e:
                 print(f"✗ Error loading: {e}")
+
+    def disable_timer_for_appliance(self, appliance_id):
+        """Disable timer for an appliance when manual override occurs"""
+        if appliance_id in self.timer_widgets:
+            widget = self.timer_widgets[appliance_id]
+            if widget.timer_enabled:
+                # Disable the timer
+                widget.timer_enabled = False
+                widget.stop_timer()
+                
+                # Update UI indicators
+                widget.status_indicator.setStyleSheet("""
+                    background-color: rgba(200, 100, 50, 200);
+                    border-radius: 8px;
+                    padding: 8px;
+                    color: white;
+                    font-weight: bold;
+                """)
+                widget.status_indicator.setText("⚠️ TIMER DISABLED - Manual Control Active")
+                
+                # Save the disabled state
+                self.save_timer_settings()
+                
+                print(f"⚠️ Timer disabled for {appliance_id} due to manual override")
