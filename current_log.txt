@@ -3,3 +3,6 @@
 2026-01-23 fan energy - 7.015106 - light energy - 0.000000 - total energy - 7.015106
 2026-01-30 fan energy - 7.015106 - light energy - 0.000000 - total energy - 7.015106
 2026-02-01 fan energy - 7.015106 - light energy - 0.000000 - total energy - 7.015106
+2026-02-02 fan energy - 7.015106 - light energy - 0.000000 - total energy - 7.015106
+2026-02-03 fan energy - 7.015106 - light energy - 0.000000 - total energy - 7.015106
+2026-02-04 fan energy - 0.000000 - light energy - 0.000000 - total energy - 0.000000
